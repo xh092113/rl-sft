@@ -1,0 +1,13 @@
+accelerate launch train.py \
+  --model_name Qwen2.5-Math-1.5B \
+  --model_path /homes/gws/lxh22/models/Qwen2.5-Math-1.5B \
+  --train_data dataset/1shot_rlvr/pi1_r1280.parquet \
+  --effective_batch 64 \
+  --micro_batch_size 2 \
+  --temperature 0.5 \
+  --learning_rate 2e-5 \
+  --max_steps 50 \
+  --log_steps 1 \
+  --save_steps 1 \
+  --run_name one_shot_1.5b_t0.5 \
+  --wandb_project one-shot-em
