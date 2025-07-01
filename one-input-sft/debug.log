@@ -1,0 +1,18 @@
+batch input_id shape: torch.Size([64, 1072])
+batch attention_mask size: torch.Size([64, 1072])
+batch labels size: torch.Size([64, 1072])
+batch input_ids: tensor([151644,   8948,    198,  ..., 151643, 151643, 151643])
+eos_token id: 151643
+pad_token id: 151643
+position 711 to 725: tensor([   374,   1124,  11520,  79075,     90,     16,     17,     13,     23,
+            92, 151643, 151643, 151643, 151643, 151643])
+mask 711 to 725: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], device='cuda:0')
+labels 711 to 725: tensor([  374,  1124, 11520, 79075,    90,    16,    17,    13,    23,    92,
+         -100,  -100,  -100,  -100,  -100], device='cuda:0')
+decode 151644: <|im_start|>
+decode 151643: <|endoftext|>
+decode 151645: <|im_end|>
+decode 198: f
+f
+decode all: #(\boxed{12.8}<|im_end|>
+<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>#

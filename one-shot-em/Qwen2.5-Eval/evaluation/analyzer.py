@@ -5,16 +5,26 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
+datasets = ['amc23x8', 'math500', 'minerva_math', 'olympiadbench']
+
 def extract_scores_from_json(json_file):
     """Extract scores from a JSON evaluation result file."""
     with open(json_file, 'r') as f:
         data = json.load(f)
     
-    scores = {}
-    for dataset in ['amc23x8', 'math500', 'minerva', 'olympiad']:
-        if dataset in data:
-            scores[dataset] = data[dataset].get('score', 0)
-    return scores
+    try:
+        return data["total_acc"]
+    except KeyError:
+        raise ValueError(f"Key 'scores' not found in JSON file: {json_file}")
+
+def extract_scores_from_path(path: Path):
+    json_files = glob.glob(str(path / '*.json'))
+    if not json_files:
+        print(f"No JSON files found in path: {path}")
+        return None
+        # raise ValueError(f"No JSON files found in path: {path}")
+    json_file = json_files[0]  # Assuming we only want the first JSON file
+    return extract_scores_from_json(json_file)
 
 def sort_checkpoint(x):
     """Sort function for checkpoint names.
@@ -25,7 +35,7 @@ def sort_checkpoint(x):
         return int(x.split('-')[1])
     except (IndexError, ValueError):
         # If the format is unexpected, return 0 to put it at the start
-        return 100
+        return 1000000
 
 def main():
     # Create results directory if it doesn't exist
@@ -33,42 +43,56 @@ def main():
     results_dir.mkdir(exist_ok=True)
     
     # Find all checkpoint directories
-    checkpoint_base = Path('../../checkpoints/Qwen2.5-Math-1.5B/one_shot')
-    checkpoint_dirs = sorted(glob.glob(str(checkpoint_base / '**/temp00'), recursive=True))
-    
-    # Collect scores for each checkpoint
+    # checkpoint_base = Path('/homes/gws/lxh22/rl-sft/one-input-sft/save/Qwen2.5-Math-1.5B-filter1') 
+    checkpoint_base = Path('/local1/lxh/save/Qwen2.5-Math-1.5B') 
+    # checkpoint_base = Path('/homes/gws/lxh22/rl-sft/one-shot-em/checkpoints/Qwen2.5-Math-1.5B/one_shot_1.5b_t0.5') ## change this
+
+    steps = list(range(0, 100, 10)) + list(range(100, 3100, 100))
+    # steps = list(range(0, 55, 5)) ## change this
     all_scores = []
-    for temp_dir in checkpoint_dirs:
-        checkpoint_path = Path(temp_dir)
-        checkpoint_name = checkpoint_path.parent.name
-        
-        # Find all JSON result files
-        json_files = glob.glob(str(checkpoint_path / '*.json'))
-        
-        ############### I believe there are some problems here. Fix later
-        for json_file in json_files:
-            # Check if the dataset name exists in the filename
-            json_filename = Path(json_file).name
-            if any(dataset in json_filename for dataset in ['amc23x8', 'math500', 'minerva', 'olympiad']):
-                scores = extract_scores_from_json(json_file)
-                if scores:
-                    scores['checkpoint'] = checkpoint_name
-                    all_scores.append(scores)
     
+    for step in steps:
+        print(f"Processing step: {step}")
+        step_str = f'step-{step}'
+        current_score = {'checkpoint': step_str}
+        for dataset in datasets:
+            extracted = extract_scores_from_path(checkpoint_base / step_str / f'temp00/eval/{dataset}')
+            if extracted: 
+                current_score[dataset] = extracted
+        extracted = extract_scores_from_path(checkpoint_base / step_str / 'temp01/amc-eval/amc23x8')
+        if extracted:
+            current_score['amc-t0.6'] = extracted
+        extracted = extract_scores_from_path(checkpoint_base / step_str / 'temp03/amc-eval/amc23x8')
+        if extracted:
+            current_score['amc-to-t0.5'] = extracted        
+        extracted = extract_scores_from_path(checkpoint_base / step_str / 'temp04/amc-eval/amc23x8')
+        if extracted:
+            current_score['amc-to'] = extracted
+        all_scores.append(current_score)
+
     # Convert to DataFrame
     df = pd.DataFrame(all_scores)
     
     # Sort the DataFrame by checkpoint number
-    df = df.sort_values(by='checkpoint', key=sort_checkpoint)
+    df = df.sort_values(by='checkpoint', key=lambda col: [sort_checkpoint(x) for x in col])
     
     # Save raw data
     df.to_csv(results_dir / 'checkpoint_scores.csv', index=False)
     
+    ## Amc line styles
+    amc_styles = {'amc23x8': '-', 'amc-t0.6': ':', 'amc-to': '--', 'amc-to-t0.5': '-.'}
+
     # Create line plot
     plt.figure(figsize=(12, 6))
-    for dataset in ['amc23x8', 'math500', 'minerva', 'olympiad']:
-        if dataset in df.columns:
-            plt.plot(df['checkpoint'], df[dataset], marker='o', label=dataset)
+    for column in df.columns:
+        if column != 'checkpoint':
+            if not column.startswith('amc'):
+                plt.plot(df['checkpoint'], df[column], marker='o', label=column)
+            else:
+                # color = '#FF204E' if '-t' in column else '#A0153E' 
+                linestyle = amc_styles.get(column, '-')
+                plt.plot(df['checkpoint'], df[column], marker='o', label=column, \
+                         linestyle=linestyle, color='purple')
     
     plt.title('Evaluation Scores Across Checkpoints')
     plt.xlabel('Checkpoint')

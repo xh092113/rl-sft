@@ -1,5 +1,5 @@
 set -x
-export CUDA_VISIBLE_DEVICES="0,1,3,5,6,7"
+export CUDA_VISIBLE_DEVICES="1,3,4,5"
 # MODEL_NAME_OR_PATH="/volume/ailab4sci/ztgao/em/checkpoints/qwen25_math_7b_1shot_pi1/step_10"
 # OUTPUT_DIR="/volume/ailab4sci/ztgao/em/checkpoints/qwen25_math_7b_1shot_pi1/step_10/temp00/eval"
 mkdir -p $OUTPUT_DIR
@@ -8,12 +8,12 @@ MAX_TOKENS_PER_CALL="3072"
 SPLIT="test"
 NUM_TEST_SAMPLE=-1
 # DATA_NAMES="amc23x8,minerva_math,olympiadbench,math500"
-DATA_NAMES="amc23x8"
+DATA_NAMES="amc23x8" # change this
 IFS=',' read -ra DATASETS <<< "$DATA_NAMES"
 ALL_EXIST=true
 
 TOKENIZERS_PARALLELISM=false \
-python3 -u math_eval.py \
+python3 -u math_eval_zyr.py \
     --model_name_or_path ${MODEL_NAME_OR_PATH} \
     --data_name ${DATA_NAMES} \
     --output_dir ${OUTPUT_DIR} \

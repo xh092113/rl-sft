@@ -8,6 +8,6 @@ accelerate launch train.py \
   --learning_rate 2e-5 \
   --max_steps 50 \
   --log_steps 1 \
-  --save_steps 1 \
+  --save_steps 5 \
   --run_name one_shot_1.5b_t0.5 \
   --wandb_project one-shot-em
