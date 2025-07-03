@@ -1,14 +1,14 @@
 set -x
-export CUDA_VISIBLE_DEVICES="1,3,4,5"
-# MODEL_NAME_OR_PATH="/volume/ailab4sci/ztgao/em/checkpoints/qwen25_math_7b_1shot_pi1/step_10"
-# OUTPUT_DIR="/volume/ailab4sci/ztgao/em/checkpoints/qwen25_math_7b_1shot_pi1/step_10/temp00/eval"
+export CUDA_VISIBLE_DEVICES="0,1,2,3"
+MODEL_NAME_OR_PATH="/homes/gws/lxh22/models/Qwen2.5-Math-7B"
+OUTPUT_DIR="/homes/gws/lxh22/rl-sft/one-shot-em/7B-eval-pi1+to"
 mkdir -p $OUTPUT_DIR
 PROMPT_TYPE="qwen25-math-cot"
 MAX_TOKENS_PER_CALL="3072"
 SPLIT="test"
 NUM_TEST_SAMPLE=-1
-# DATA_NAMES="amc23x8,minerva_math,olympiadbench,math500"
-DATA_NAMES="amc23x8" # change this
+#DATA_NAMES="amc23x8,minerva_math,olympiadbench,math500"
+DATA_NAMES="math500-modified" # change this
 IFS=',' read -ra DATASETS <<< "$DATA_NAMES"
 ALL_EXIST=true
 
@@ -21,7 +21,7 @@ python3 -u math_eval_zyr.py \
     --prompt_type ${PROMPT_TYPE} \
     --num_test_sample ${NUM_TEST_SAMPLE} \
     --seed 0 \
-    --temperature 0.6 \
+    --temperature 0.0 \
     --n_sampling 1 \
     --top_p 1 \
     --start 0 \

@@ -140,7 +140,7 @@ PROMPT_TEMPLATES = {
     ),
     "qwen25-math-cot": (
         "<|im_start|>system\nPlease reason step by step, and put your final answer within \\boxed{{}}.<|im_end|>\n"
-        "<|im_start|>user\n{input}<|im_end|>\n"
+        "<|im_start|>user\nQuestion: The pressure \\( P \\) exerted by wind on a sail varies jointly as the area \\( A \\) of the sail and the cube of the wind's velocity \\( V \\). When the velocity is \\( 8 \\) miles per hour, the pressure on a sail of \\( 2 \\) square feet is \\( 4 \\) pounds. Find the wind velocity when the pressure on \\( 4 \\) square feet of sail is \\( 32 \\) pounds. Let's think step by step and output the final answer within \\boxed{{}}.\nAnswer: We start by writing the mathematical relationship for the pressure \\( P \\):\n\\[ P = k \\cdot A \\cdot V^3 \\]\nwhere \\( k \\) is a constant. We need to find \\( k \\) using the given information:\n\\[ 4 = k \\cdot 2 \\cdot 8^3 \\]\nSolving for \\( k \\):\n\\[ 4 = k \\cdot 2 \\cdot 512 \\]\n\\[ 4 = 1024k \\]\n\\[ k = \\frac{{4}}{{1024}} \\]\n\\[ k = \\frac{{1}}{{256}} \\]\nNow we use this value of \\( k \\) to find the velocity \\( V \\) when the pressure \\( P \\) on 4 square feet of sail is 32 pounds:\n\\[ 32 = \\frac{{1}}{{256}} \\cdot 4 \\cdot V^3 \\]\n\\[ 32 = \\frac{{V^3}}{{64}} \\]\n\\[ 32 \\cdot 64 = V^3 \\]\n\\[ 2048 = V^3 \\]\n\\[ V = \\sqrt[3]{{2048}} \\]\n\\[ V = 12.8 \\]\nThus, the wind velocity is \\( \\boxed{{12.8}} \\) miles per hour.\n\n\nQuestion: {input}\nAnswer:<|im_end|>\n"
         "<|im_start|>assistant\n",
         "{output}",
         "\n\n",

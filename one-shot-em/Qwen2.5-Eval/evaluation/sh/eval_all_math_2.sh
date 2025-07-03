@@ -1,5 +1,5 @@
 set -x
-export CUDA_VISIBLE_DEVICES="3,5,6,7"
+export CUDA_VISIBLE_DEVICES="0,1,3,5,6,7"
 # MODEL_NAME_OR_PATH="/homes/gws/lxh22/rl-sft/one-input-sft/save/Qwen2.5-Math-1.5B/step-0"
 # OUTPUT_DIR="/homes/gws/lxh22/rl-sft/one-input-sft/save/Qwen2.5-Math-1.5B/step-0/temp00/amc-eval"
 mkdir -p $OUTPUT_DIR
